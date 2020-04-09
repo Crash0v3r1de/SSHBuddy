@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Renci.SshNet;
 using SSHBuddy.Lists;
 
 namespace SSHBuddy.Tools
@@ -43,6 +46,30 @@ namespace SSHBuddy.Tools
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        public static List<string> SendCommand(string command, SshClient client)
+        {
+            var newLines = command.Split('\n');
+            List<string> allOutputs = new List<string>();
+            SshCommand sc = null;
+            TimeSpan span = TimeSpan.FromMinutes(5);
+            sc.CommandTimeout = span;
+            foreach (var com in newLines)
+            {
+                sc = client.CreateCommand(com);
+            }
+            sc.Execute();
+            allOutputs.Add(sc.Result);
+            if (!String.IsNullOrWhiteSpace(allOutputs.ToString()))
+            {
+                Debug.WriteLine("Command executed successfully!");
+                return allOutputs;
+            }
+            else
+            {
+                return null;
             }
         }
     }

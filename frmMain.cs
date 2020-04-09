@@ -11,11 +11,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Renci.SshNet;
 using SSHBuddy.Enums;
+using SSHBuddy.Tools;
 using SSHBuddy.UI;
 
 namespace SSHBuddy
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         private Random rng = new Random();
         private SshClient sshClient = null;
@@ -26,7 +27,7 @@ namespace SSHBuddy
         private bool reset = false;
         private bool disconnect = false;
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
         }
@@ -36,6 +37,17 @@ namespace SSHBuddy
             if (!connected)
             {
                 ProcessQuickConnect();
+            }
+            else
+            {
+                var result =
+                    MessageBox.Show(
+                        "An active instance is present.\r\nDo you want to connect to another host instead?",
+                        "Active Connection", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    ProcessQuickConnect();
+                }
             }
         }
 
@@ -263,6 +275,27 @@ namespace SSHBuddy
             else
             {
                 MessageBox.Show("SSH client is NOT connected!");
+            }
+        }
+
+        private void customToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (CustomScriptUI script = new CustomScriptUI())
+            {
+                script.ShowDialog();
+                if (!String.IsNullOrWhiteSpace(script.CompleteScript))
+                {
+                    UpdateStatus("Running custom script...");
+                    var output = ClientTool.SendCommand(script.CompleteScript,sshClient);
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var line in output)
+                    {
+                        sb.Append(line);
+                    }
+
+                    txtConsole.Text = sb.ToString();
+                    UpdateStatus("Script return completed!");
+                }
             }
         }
     }

@@ -43,11 +43,18 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pingDNSIPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.networkBasicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spanningTreeRapidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iPRoutingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bulkProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clientListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblConnectStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.assignMasterCredentialsperSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.linuxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -77,7 +84,7 @@
             this.groupBox1.Size = new System.Drawing.Size(286, 107);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Connection Details";
+            this.groupBox1.Text = "Quick Connect Details";
             // 
             // txtPassword
             // 
@@ -131,7 +138,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblStatus});
+            this.lblStatus,
+            this.lblConnectStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 313);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(531, 22);
@@ -146,10 +154,11 @@
             // 
             // txtConsole
             // 
-            this.txtConsole.Location = new System.Drawing.Point(12, 146);
+            this.txtConsole.Location = new System.Drawing.Point(0, 146);
             this.txtConsole.Name = "txtConsole";
             this.txtConsole.ReadOnly = true;
-            this.txtConsole.Size = new System.Drawing.Size(507, 164);
+            this.txtConsole.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.txtConsole.Size = new System.Drawing.Size(531, 164);
             this.txtConsole.TabIndex = 4;
             this.txtConsole.Text = "";
             // 
@@ -168,6 +177,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.commandsToolStripMenuItem,
+            this.bulkProcessingToolStripMenuItem,
+            this.disconnectToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -190,14 +201,11 @@
             this.commandsToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
             this.commandsToolStripMenuItem.Text = "Commands";
             // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
             // pingDNSIPToolStripMenuItem
             // 
+            this.pingDNSIPToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.windowsToolStripMenuItem,
+            this.linuxToolStripMenuItem});
             this.pingDNSIPToolStripMenuItem.Name = "pingDNSIPToolStripMenuItem";
             this.pingDNSIPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pingDNSIPToolStripMenuItem.Text = "Ping DNS/IP";
@@ -209,22 +217,79 @@
             this.spanningTreeRapidToolStripMenuItem,
             this.iPRoutingToolStripMenuItem});
             this.networkBasicsToolStripMenuItem.Name = "networkBasicsToolStripMenuItem";
-            this.networkBasicsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.networkBasicsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.networkBasicsToolStripMenuItem.Text = "Network Basics";
             // 
             // spanningTreeRapidToolStripMenuItem
             // 
             this.spanningTreeRapidToolStripMenuItem.Name = "spanningTreeRapidToolStripMenuItem";
-            this.spanningTreeRapidToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.spanningTreeRapidToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.spanningTreeRapidToolStripMenuItem.Text = "SpanningTree Rapid";
             this.spanningTreeRapidToolStripMenuItem.Click += new System.EventHandler(this.spanningTreeRapidToolStripMenuItem_Click);
             // 
             // iPRoutingToolStripMenuItem
             // 
             this.iPRoutingToolStripMenuItem.Name = "iPRoutingToolStripMenuItem";
-            this.iPRoutingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.iPRoutingToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.iPRoutingToolStripMenuItem.Text = "IP Routing";
             this.iPRoutingToolStripMenuItem.Click += new System.EventHandler(this.iPRoutingToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // bulkProcessingToolStripMenuItem
+            // 
+            this.bulkProcessingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clientListToolStripMenuItem,
+            this.assignMasterCredentialsperSessionToolStripMenuItem});
+            this.bulkProcessingToolStripMenuItem.Name = "bulkProcessingToolStripMenuItem";
+            this.bulkProcessingToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
+            this.bulkProcessingToolStripMenuItem.Text = "Bulk Processing";
+            this.bulkProcessingToolStripMenuItem.Click += new System.EventHandler(this.bulkProcessingToolStripMenuItem_Click);
+            // 
+            // clientListToolStripMenuItem
+            // 
+            this.clientListToolStripMenuItem.Name = "clientListToolStripMenuItem";
+            this.clientListToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
+            this.clientListToolStripMenuItem.Text = "Client List";
+            this.clientListToolStripMenuItem.Click += new System.EventHandler(this.clientListToolStripMenuItem_Click);
+            // 
+            // lblConnectStatus
+            // 
+            this.lblConnectStatus.Name = "lblConnectStatus";
+            this.lblConnectStatus.Size = new System.Drawing.Size(106, 17);
+            this.lblConnectStatus.Text = "SSH: Disconnected";
+            // 
+            // assignMasterCredentialsperSessionToolStripMenuItem
+            // 
+            this.assignMasterCredentialsperSessionToolStripMenuItem.Name = "assignMasterCredentialsperSessionToolStripMenuItem";
+            this.assignMasterCredentialsperSessionToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
+            this.assignMasterCredentialsperSessionToolStripMenuItem.Text = "Assign Master Credentials (per session)";
+            this.assignMasterCredentialsperSessionToolStripMenuItem.Click += new System.EventHandler(this.assignMasterCredentialsperSessionToolStripMenuItem_Click);
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
+            // 
+            // windowsToolStripMenuItem
+            // 
+            this.windowsToolStripMenuItem.Name = "windowsToolStripMenuItem";
+            this.windowsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.windowsToolStripMenuItem.Text = "Windows";
+            this.windowsToolStripMenuItem.Click += new System.EventHandler(this.windowsToolStripMenuItem_Click);
+            // 
+            // linuxToolStripMenuItem
+            // 
+            this.linuxToolStripMenuItem.Name = "linuxToolStripMenuItem";
+            this.linuxToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.linuxToolStripMenuItem.Text = "Linux";
+            this.linuxToolStripMenuItem.Click += new System.EventHandler(this.linuxToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -273,6 +338,13 @@
         private System.Windows.Forms.ToolStripMenuItem networkBasicsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem spanningTreeRapidToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem iPRoutingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bulkProcessingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clientListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel lblConnectStatus;
+        private System.Windows.Forms.ToolStripMenuItem assignMasterCredentialsperSessionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem windowsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem linuxToolStripMenuItem;
     }
 }
 

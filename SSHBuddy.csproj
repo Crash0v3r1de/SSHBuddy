@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
@@ -49,14 +52,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\ConnectStatus.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\FileHandler.cs" />
+    <Compile Include="Lists\ClientDetails.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Static\BulkCred.cs" />
+    <Compile Include="Tools\ClientTool.cs" />
+    <Compile Include="UI\ClientUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ClientUI.Designer.cs">
+      <DependentUpon>ClientUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MasterPassUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MasterPassUI.Designer.cs">
+      <DependentUpon>MasterPassUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\PingTargetUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -75,6 +95,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UI\ClientUI.resx">
+      <DependentUpon>ClientUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MasterPassUI.resx">
+      <DependentUpon>MasterPassUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\PingTargetUI.resx">
       <DependentUpon>PingTargetUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -92,6 +118,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

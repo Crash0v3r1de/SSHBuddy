@@ -6,9 +6,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Renci.SshNet;
+using SSHBuddy.Enums;
 using SSHBuddy.UI;
 
 namespace SSHBuddy
@@ -22,6 +24,7 @@ namespace SSHBuddy
         private string pass = "";
         private bool connected = false;
         private bool reset = false;
+        private bool disconnect = false;
 
         public Form1()
         {
@@ -32,28 +35,45 @@ namespace SSHBuddy
         {
             if (!connected)
             {
-                UpdateStatus("Connecting...");
-                host = txtHost.Text;
-                user = txtUser.Text;
-                pass = txtPassword.Text;
-                txtPassword.Text = rng.Next(54646).ToString();
-
-                sshClient = new SshClient(host, user, pass);
-                sshClient.Connect();
-                UpdateStatus("Connected!");
-                pass = null; // Clear out memory of password ?
-                connected = true;
+                ProcessQuickConnect();
             }
         }
 
-        private async void button2_Click(object sender, EventArgs e)
+        private void ProcessQuickConnect()
         {
-            
+            ConnectionUpdate(ConnectStatus.Connecting);
+            host = txtHost.Text;
+            user = txtUser.Text;
+            pass = txtPassword.Text;
+            txtPassword.Text = rng.Next(54646).ToString();
+
+            sshClient = new SshClient(host, user, pass);
+            sshClient.Connect();
+            pass = null; // Clear out memory of password ?
+            connected = true;
+            ConnectionUpdate(ConnectStatus.Connected);
+            // Simple connection checker
+            new Thread(() => { ConnectionWatch(); }).Start();
+        }
+
+        private void ConnectionWatch()
+        {
+            while (sshClient.IsConnected)
+            {
+                if (!sshClient.IsConnected) ConnectionUpdate(ConnectStatus.Disconnected);
+                if (disconnect)
+                {
+                    ConnectionUpdate(ConnectStatus.Disconnected);
+                    sshClient.Disconnect();
+                    break;
+                }
+                Thread.Sleep(rng.Next(2150));
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         private void UpdateStatus(string status)
@@ -67,40 +87,42 @@ namespace SSHBuddy
             lblStatus.Text = "Status: "+status;
         }
 
+        private void ConnectionUpdate(ConnectStatus conStat)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<ConnectStatus>(ConnectionUpdate), conStat);
+                return;
+            }
+
+            switch (conStat)
+            {
+                case ConnectStatus.Disconnected:
+                    lblConnectStatus.Text = "SSH: DISCONNECTED!";
+                    lblConnectStatus.ForeColor = Color.Black;
+                    lblConnectStatus.Font = new Font(Label.DefaultFont, FontStyle.Regular);
+                    break;
+                case ConnectStatus.Connected:
+                    lblConnectStatus.Text = "SSH: Connected!";
+                    lblConnectStatus.ForeColor = Color.Green;
+                    lblConnectStatus.Font = new Font(Label.DefaultFont, FontStyle.Regular);
+                    break;
+                case ConnectStatus.Error:
+                    lblConnectStatus.Text = "SSH: ERROR DURING SESSION!";
+                    lblConnectStatus.ForeColor = Color.Red;
+                    lblConnectStatus.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+                    break;
+                case ConnectStatus.Connecting:
+                    lblConnectStatus.Text = "SSH: Connecting...";
+                    lblConnectStatus.ForeColor = Color.Black;
+                    lblConnectStatus.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+                    break;
+            }
+        }
+
         private void pingDNSIPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (connected)
-            {
-                using (PingTargetUI pUI = new PingTargetUI())
-                {
-                    pUI.ShowDialog();
-                    if (!String.IsNullOrWhiteSpace(pUI.target))
-                    {
-                        UpdateStatus("Sending Commands...");
-                        SshCommand sc = sshClient.CreateCommand($"ping {pUI.target} -c 5");
-                        sc.Execute();
-                        string answer = sc.Result;
-                        if (!String.IsNullOrWhiteSpace(answer))
-                        {
-                            UpdateStatus("Command Completed!");
-                            txtConsole.Text = "";
-                            txtConsole.Text = answer;
-                        }
-                        else
-                        {
-                            UpdateStatus("Command Failed!");
-                        }
-                    }
-                    else
-                    {
-                        UpdateStatus("Input Missing!");
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("SSH client is NOT connected!");
-            }
+            
         }
 
         private void spanningTreeRapidToolStripMenuItem_Click(object sender, EventArgs e)
@@ -142,6 +164,105 @@ namespace SSHBuddy
                 UpdateStatus("Command Failed!");
                 txtConsole.Text = "";
                 txtConsole.Text = "ERROR: " + ex.Message;
+            }
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            disconnect = true;
+            UpdateStatus("Client disconnecting...");
+        }
+
+        private void bulkProcessingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void clientListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (ClientUI cUI = new ClientUI())
+            {
+                cUI.ShowDialog();
+            }
+        }
+
+        private void assignMasterCredentialsperSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (MasterPassUI passUI = new MasterPassUI())
+            {
+                passUI.ShowDialog();
+            }
+        }
+
+        private void linuxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (connected)
+            {
+                using (PingTargetUI pUI = new PingTargetUI())
+                {
+                    pUI.ShowDialog();
+                    if (!String.IsNullOrWhiteSpace(pUI.target))
+                    {
+                        UpdateStatus("Sending Commands...");
+                        SshCommand sc = sshClient.CreateCommand($"ping {pUI.target} -c 5");
+                        sc.Execute();
+                        string answer = sc.Result;
+                        if (!String.IsNullOrWhiteSpace(answer))
+                        {
+                            UpdateStatus("Command Completed!");
+                            txtConsole.Text = "";
+                            txtConsole.Text = answer;
+                        }
+                        else
+                        {
+                            UpdateStatus("Command Failed!");
+                        }
+                    }
+                    else
+                    {
+                        UpdateStatus("Input Missing!");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("SSH client is NOT connected!");
+            }
+        }
+
+        private void windowsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (connected)
+            {
+                using (PingTargetUI pUI = new PingTargetUI())
+                {
+                    pUI.ShowDialog();
+                    if (!String.IsNullOrWhiteSpace(pUI.target))
+                    {
+                        UpdateStatus("Sending Commands...");
+                        SshCommand sc = sshClient.CreateCommand($"ping {pUI.target}");
+                        sc.Execute();
+                        string answer = sc.Result;
+                        if (!String.IsNullOrWhiteSpace(answer))
+                        {
+                            UpdateStatus("Command Completed!");
+                            txtConsole.Text = "";
+                            txtConsole.Text = answer;
+                        }
+                        else
+                        {
+                            UpdateStatus("Command Failed!");
+                        }
+                    }
+                    else
+                    {
+                        UpdateStatus("Input Missing!");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("SSH client is NOT connected!");
             }
         }
     }
